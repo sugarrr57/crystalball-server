@@ -53,23 +53,12 @@ const connectDB = async () => {
 // 立即开始连接（非阻塞）
 connectDB();
 
-// 健康检查接口 - 快速响应
-app.get('/api/health', async (req, res) => {
-    try {
-        const dbStatus = dbConnected ? 'connected' : 'disconnected';
-        res.json({
-            status: 'ok',
-            message: '服务器运行正常',
-            timestamp: new Date().toISOString(),
-            database: dbStatus
-        });
-    } catch (error) {
-        res.status(200).json({
-            status: 'warning',
-            message: '服务器可用但数据库连接失败',
-            timestamp: new Date().toISOString()
-        });
-    }
+app.get('/', (req, res) => {
+    res.send({
+        status: 'ok',
+        message: '后端服务运行成功！',
+        author: 'sugarrr'
+    });
 });
 
 // 导入路由
@@ -98,7 +87,7 @@ app.use((err, req, res, next) => {
 
 // 本地开发环境才启动服务器
 if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
         console.log(`╔═══════════════════════════════════════════╗
 ║   🎉 魔法水晶球服务器启动成功！           ║
