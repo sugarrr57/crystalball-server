@@ -85,11 +85,24 @@ app.use((err, req, res, next) => {
     });
 });
 
-// 本地开发环境才启动服务器
-if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-        console.log(`╔═══════════════════════════════════════════╗
+// 健康检查端点
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'healthy',
+        service: 'CrystalBall Server',
+        version: '1.0.0',
+        timestamp: new Date().toISOString(),
+        database: dbConnected ? 'connected' : 'disconnected'
+    });
+});
+
+// 导出 app（Vercel/云平台使用）
+module.exports = app;
+
+// 在任何环境下都启动服务器（包括 Railway 等云平台）
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`╔═══════════════════════════════════════════╗
 ║   🎉 魔法水晶球服务器启动成功！           ║
 ║                                           ║
 ║   🌐 访问地址：http://localhost:${PORT}       ║
@@ -97,8 +110,5 @@ if (process.env.NODE_ENV !== 'production') {
 ║   💾 数据库：MongoDB                      ║
 ╚═══════════════════════════════════════════╝
   `);
-    });
-}
+});
 
-// Vercel Serverless 导出
-module.exports = app;
