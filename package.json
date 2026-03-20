@@ -4,7 +4,7 @@
   "description": "魔法水晶球后端服务",
   "main": "server.js",
   "scripts": {
-    "start": "node --max-old-space-size=128 server.js",
+    "start": "node --max-old-space-size=192 server.js",
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
