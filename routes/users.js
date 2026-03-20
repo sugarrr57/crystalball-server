@@ -38,6 +38,98 @@ router.get('/', auth, async (req, res) => {
 });
 
 /**
+ * POST /api/users
+ * 新增用户（需要管理员权限）
+ */
+router.post('/', auth, async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.userId);
+        if (!currentUser || currentUser.role === 'user') {
+            return res.status(403).json({
+                message: '无权访问，需要管理员权限'
+            });
+        }
+
+        const { username, password, email, role } = req.body;
+
+        if (!username || !password) {
+            return res.status(400).json({
+                message: '用户名和密码不能为空'
+            });
+        }
+
+        if (username.length < 3 || username.length > 30) {
+            return res.status(400).json({
+                message: '用户名长度需要在 3-30 个字符之间'
+            });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({
+                message: '密码长度至少为 6 位'
+            });
+        }
+
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({
+                message: '请输入有效的邮箱地址'
+            });
+        }
+
+        const validRoles = ['user', 'manager', 'admin'];
+        if (role && !validRoles.includes(role)) {
+            return res.status(400).json({
+                message: '无效的角色类型'
+            });
+        }
+
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({
+                message: '用户名已被使用'
+            });
+        }
+
+        if (email) {
+            const existingEmail = await User.findOne({ email });
+            if (existingEmail) {
+                return res.status(400).json({
+                    message: '邮箱已被使用'
+                });
+            }
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const user = new User({
+            username: username.trim(),
+            password: hashedPassword,
+            email: email ? email.toLowerCase().trim() : null,
+            role: role || 'user',
+        });
+
+        await user.save();
+
+        res.status(201).json({
+            message: '用户创建成功',
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                createdAt: user.createdAt,
+            }
+        });
+    } catch (error) {
+        console.error('创建用户错误:', error);
+        res.status(500).json({
+            message: '创建失败：' + error.message
+        });
+    }
+});
+
+/**
  * GET /api/users/search?keyword=xxx
  * 搜索用户（需要管理员权限）
  */
