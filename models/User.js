@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema({
         required: [true, '密码不能为空'],
         minlength: 6,
     },
+    role: {
+        type: String,
+        enum: ['user', 'manager', 'admin'],
+        default: 'user',
+    },
     createdAt: {
         type: Date,
         default: Date.now,

@@ -69,12 +69,14 @@ app.get('/', (req, res) => {
 const authRoutes = require('./routes/auth');
 const notesRoutes = require('./routes/notes');
 const taskRoutes = require('./routes/tasks');
+const userRoutes = require('./routes/users');
 // 后续添加其他模块的路由...
 
 // 注册路由
 app.use('/api/auth', authRoutes);      // 认证相关：/api/auth/login, /api/auth/register
 app.use('/api/notes', notesRoutes);    // 快捷备忘：/api/notes
 app.use('/api/tasks', taskRoutes);     // 任务看板：/api/tasks
+app.use('/api/users', userRoutes);     // 用户管理：/api/users
 
 // 全局错误处理
 app.use((err, req, res, next) => {
