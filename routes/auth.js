@@ -48,10 +48,13 @@ router.post('/register', async (req, res) => {
         await user.save();
 
         // 生成 token
+        const jwtSecret = process.env.JWT_SECRET || 'crystalball-secret-key-change-in-production';
+        const jwtExpire = process.env.JWT_EXPIRE || '7d';
+
         const token = jwt.sign(
             { userId: user._id, username: user.username },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRE }
+            jwtSecret,
+            { expiresIn: jwtExpire }
         );
 
         res.status(201).json({

@@ -15,6 +15,12 @@ const dotenv = require('dotenv');
 // 加载环境变量
 dotenv.config();
 
+// 确保 JWT_SECRET 有值（Railway 环境变量可能未正确加载）
+if (!process.env.JWT_SECRET) {
+    process.env.JWT_SECRET = 'crystalball-secret-key-change-in-production';
+    console.log('⚠️ 使用默认 JWT_SECRET');
+}
+
 const app = express();
 
 // 中间件配置
