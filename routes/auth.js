@@ -48,13 +48,10 @@ router.post('/register', async (req, res) => {
         await user.save();
 
         // 生成 token
-        const jwtSecret = process.env.JWT_SECRET || 'crystalball-secret-key-change-in-production';
-        const jwtExpire = process.env.JWT_EXPIRE || '7d';
-
         const token = jwt.sign(
             { userId: user._id, username: user.username },
-            jwtSecret,
-            { expiresIn: jwtExpire }
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRE }
         );
 
         res.status(201).json({
@@ -110,16 +107,10 @@ router.post('/login', async (req, res) => {
         await user.save();
 
         // 生成 token
-        const jwtSecret = process.env.JWT_SECRET || 'crystalball-secret-key-change-in-production';
-        const jwtExpire = process.env.JWT_EXPIRE || '7d';
-
-        // 确保 jwtExpire 是有效的字符串
-        const expireValue = jwtExpire ? String(jwtExpire) : '7d';
-
         const token = jwt.sign(
             { userId: user._id, username: user.username },
-            jwtSecret,
-            { expiresIn: expireValue }
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRE }
         );
 
         res.json({
