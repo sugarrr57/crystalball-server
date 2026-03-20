@@ -72,11 +72,6 @@ app.use('/api/auth', authRoutes);      // 认证相关：/api/auth/login, /api/a
 app.use('/api/notes', notesRoutes);    // 快捷备忘：/api/notes
 app.use('/api/tasks', taskRoutes);     // 任务看板：/api/tasks
 
-// 404 错误处理
-app.use((req, res) => {
-    res.status(404).json({ message: '接口不存在' });
-});
-
 // 全局错误处理
 app.use((err, req, res, next) => {
     console.error('错误:', err);
@@ -94,6 +89,11 @@ app.get('/api/health', (req, res) => {
         timestamp: new Date().toISOString(),
         database: dbConnected ? 'connected' : 'disconnected'
     });
+});
+
+// 404 错误处理
+app.use((req, res) => {
+    res.status(404).json({ message: '接口不存在' });
 });
 
 // 导出 app（Vercel/云平台使用）
